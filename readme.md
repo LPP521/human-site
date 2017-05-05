@@ -1,0 +1,1 @@
+pip install requirements.txt -i https://pypi.douban.com/simple
