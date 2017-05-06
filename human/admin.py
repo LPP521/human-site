@@ -14,6 +14,8 @@ class AssetAdmin(admin.ModelAdmin):
     list_display = ('name', 'mark','sort', 'purchase')
 class UserAssetAdmin(admin.ModelAdmin):
     list_display = ('user', 'asset', 'borrow', 'back')
+class AttendanceAdmin(admin.ModelAdmin):
+    list_display = ('user', 'date', 'status')
     
 admin.site.register(UserInfo, UserAdmin)
 admin.site.register(Department, DepartmentAdmin)
@@ -21,5 +23,5 @@ admin.site.register(Salary, SalaryAdmin)
 admin.site.register(Asset, AssetAdmin)
 admin.site.register(UserAsset, UserAssetAdmin)
 admin.site.register(DepAsset)
-admin.site.register(Attendance)
+admin.site.register(Attendance, AttendanceAdmin)
 

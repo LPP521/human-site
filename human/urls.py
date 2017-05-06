@@ -8,5 +8,7 @@ urlpatterns = [
    url(r'^auth$', obtain_jwt_token),
    url(r'^users/(?P<pk>[0-9]+)$', views.UserDetail.as_view()),
    url(r'^salarys/(?P<pk>[0-9]+)$', views.SalaryList.as_view()),
-   url(r'^assets/(?P<pk>[0-9]+)$', views.AssetList.as_view())  
+   url(r'^assets/(?P<pk>[0-9]+)$', views.AssetList.as_view()),
+   url(r'^attendances/(?P<pk>[0-9]+)$', views.AttendanceDetail.as_view()),
+   url(r'^attendances$', views.AttendanceList.as_view()),
 ]

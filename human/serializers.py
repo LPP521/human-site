@@ -45,3 +45,8 @@ class UserAssetSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserAsset
         fields = ('id', 'asset', 'borrow', 'back')
+
+class AttendanceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Attendance
+        fields = ('user', 'date', 'status')
