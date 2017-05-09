@@ -126,7 +126,7 @@ LEAVE = 3    # 请假
 VACATION = 4 # 年假
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    date = models.DateTimeField('日期', auto_now_add = True)
+    date = models.DateTimeField('日期', default=datetime.datetime.now())
     status = models.IntegerField('状态', default = ATTEND)
 
     class Meta:

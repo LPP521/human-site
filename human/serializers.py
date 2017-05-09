@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from django.utils import timezone
 from django.contrib.auth.models import User
 from human.models import *
 
@@ -46,7 +47,14 @@ class UserAssetSerializer(serializers.ModelSerializer):
         model = UserAsset
         fields = ('id', 'asset', 'borrow', 'back')
 
+class DateTimeFieldWihTZ(serializers.DateTimeField):
+
+    def to_representation(self, value):
+        value = timezone.localtime(value)
+        return super(DateTimeFieldWihTZ, self).to_representation(value)
+
 class AttendanceSerializer(serializers.ModelSerializer):
+    date = DateTimeFieldWihTZ('%Y-%m-%d %H:%M:%S')
     class Meta:
         model = Attendance
         fields = ('user', 'date', 'status')

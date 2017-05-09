@@ -4,7 +4,7 @@ from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, permissions
-
+import datetime
 
 # Create your views here.
 
@@ -68,6 +68,7 @@ class AssetList(APIView):
 
 class AttendanceList(APIView):
     def post(self, request, format=None):
+        request.data['date'] = request.data.get('date', datetime.datetime.now()) 
         serializer = AttendanceSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -75,13 +76,51 @@ class AttendanceList(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class AttendanceDetail(APIView):
-    def get_object(self, pk):
+    def get_object(self, pk, **params):
         try:
-            return Attendance.objects.filter(user=pk)
+            return Attendance.objects.filter(user=pk, **params)
         except UserAsset.DoesNotExist:
             raise Http404
 
     def get(self, request, pk, format=None):
-        Attendance = self.get_object(pk)
+        filters = {}
+        for param in request.query_params:
+            filters[param] = request.query_params[param]
+        print(filters)
+        Attendance = self.get_object(pk, **filters)
         serializer = AttendanceSerializer(Attendance, many=True)
         return Response(serializer.data)
+
+class VacationDetail(APIView):
+    def post(self, request, *args, **kwargs):
+        print(request.data)
+        print(request.data['start'].split('-'))
+        user = request.data['user']
+        start = request.data['start'].split('-')
+        end = request.data['end'].split('-')
+        days = (datetime.datetime(int(end[0]), int(end[1]), int(end[2])) - datetime.datetime(int(start[0]), int(start[1]), int(start[2]))).days
+        serializers = []
+        flag = True
+        for x in range(days + 1):
+            data = {
+                'date': (datetime.datetime(int(start[0]), int(start[1]), int(start[2]), 0 , 0 ,0) + datetime.timedelta(days = x)),
+                'user': user,
+                'status': 4
+            }
+            serializer = AttendanceSerializer(data=data)
+            serializers.append(serializer)
+
+        print(serializers)
+        for serializer in serializers:
+            if not serializer.is_valid():
+                flag = False
+        
+        if flag:
+            for serializer in serializers:
+                serializer.save()
+            return Response({"message": "success", "error": 0})
+        else:
+            return Response({"message": "error", "error": 1})
+                
+
+        

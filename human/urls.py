@@ -11,4 +11,5 @@ urlpatterns = [
    url(r'^assets/(?P<pk>[0-9]+)$', views.AssetList.as_view()),
    url(r'^attendances/(?P<pk>[0-9]+)$', views.AttendanceDetail.as_view()),
    url(r'^attendances$', views.AttendanceList.as_view()),
+   url(r'^vacation$', views.VacationDetail.as_view())
 ]
