@@ -17,6 +17,8 @@ class UserInfo(models.Model):
         return self.user.username
     def name(self):
         return self.user.first_name + self.user.last_name
+    def id(self):
+        return self.user.id
 
     name.short_description = '姓名'
 
@@ -126,9 +128,27 @@ LEAVE = 3    # 请假
 VACATION = 4 # 年假
 class Attendance(models.Model):
     user = models.ForeignKey(User, on_delete = models.CASCADE)
-    date = models.DateTimeField('日期', default=datetime.datetime.now())
+    date = models.DateTimeField('日期', default = datetime.datetime.now())
     status = models.IntegerField('状态', default = ATTEND)
 
     class Meta:
         verbose_name = '员工考勤'
         verbose_name_plural = '员工考勤'
+
+class Message(models.Model):
+    MESSAGE_TYPE = (
+        ('leave', '请假'),
+        ('return', '物品归还')
+    )
+
+    sender = models.ForeignKey(User, related_name = "sender",on_delete = models.CASCADE, verbose_name = "发件人")
+    to = models.ForeignKey(User, related_name = "to",on_delete = models.CASCADE, verbose_name = "收件人")
+    message_type = models.CharField('消息类型', choices = MESSAGE_TYPE, max_length = 15)
+    content = models.TextField('消息内容')
+    key = models.IntegerField('关键信息', blank=True, null=True)
+    time = models.DateTimeField('发送时间', default = datetime.datetime.now(), blank=True, null=True)
+    status = models.BooleanField('已读？',default = False)
+
+    class Meta:
+        verbose_name = '消息管理'
+        verbose_name_plural = '消息管理'

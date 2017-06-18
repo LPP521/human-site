@@ -6,6 +6,7 @@ from rest_framework.response import Response
 from rest_framework import status, permissions
 import datetime
 
+# 处理请求
 # Create your views here.
 
 class UserDetail(APIView):
@@ -121,6 +122,76 @@ class VacationDetail(APIView):
             return Response({"message": "success", "error": 0})
         else:
             return Response({"message": "error", "error": 1})
+
+class MessageDetail(APIView):
+    def get_user_master(self, id):
+        master = UserInfo.objects.get(pk = id).dep.master.user
+        return master
+
+    def get_user(self, id):
+        user = User.objects.get(pk = id)
+        return user
+            
+
+    def post(self, request, *args, **kwargs):
+        data = request.data
+        id = data['sender']
+        message = Message.objects.create(sender=self.get_user(id), to=self.get_user_master(id),message_type=data['type'],content=data['content'], key=data['key'])
+       
+        if message.save():
+            return Response({"message": "success", "error": 0})
+        else:
+            return Response({"message": "error", "error": 1})
+
+class MessageList(APIView):
+    # 从数据库中获取记录
+    def get_object(self, pk):
+        try:
+            return Message.objects.filter(to = pk)
+        except Message.DoesNotExist:
+            raise Http404
+
+    def get(self, request, pk, format=None):
+        message = self.get_object(pk)
+        serializer = MessageSerializer(message, many=True)
+        return Response(serializer.data)
+
+class MessageOptions(APIView):
+    def get_object(self, pk):
+        try:
+            return Message.objects.get(pk = pk)
+        except Message.DoesNotExist:
+            raise Http404
+    
+    def put(self, request, pk, format=None):
+        message = self.get_object(pk)
+        print(message)
+        if not message.status:
+            message.status = True
+            if message.save():
+                return Response({"message": "success", "error": 0})
+            else:
+                return Response({"message": "error", "error": 1})
+        else:
+            return Response({"message": "success", "error": 0})
+
+class AssetOptions(APIView):
+    def get_object(self, pk):
+        try:
+            return UserAsset.objects.get(pk = pk)
+        except Message.DoesNotExist:
+            raise Http404
+    
+    def put(self, request, pk, format=None):
+        obj = self.get_object(pk)
+        obj.back = datetime.datetime.now()
+        if obj.save():
+            return Response({"message": "success", "error": 0})
+        else:
+            return Response({"message": "error", "error": 1})
+
+
+
                 
 
         

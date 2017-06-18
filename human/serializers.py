@@ -47,6 +47,7 @@ class UserAssetSerializer(serializers.ModelSerializer):
         model = UserAsset
         fields = ('id', 'asset', 'borrow', 'back')
 
+# 日期匹配时区
 class DateTimeFieldWihTZ(serializers.DateTimeField):
 
     def to_representation(self, value):
@@ -58,3 +59,10 @@ class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Attendance
         fields = ('user', 'date', 'status')
+
+class MessageSerializer(serializers.ModelSerializer):
+    time = DateTimeFieldWihTZ('%Y-%m-%d %H:%M:%S')
+    sender = UserSerializer()
+    class Meta:
+        model = Message
+        fields = ('id', 'sender', 'to', 'message_type', 'content', 'time', 'status', 'key')
