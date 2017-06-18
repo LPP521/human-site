@@ -6,11 +6,16 @@ import datetime
 # Create your models here.
 
 class UserInfo(models.Model):
+    ARMS_TYPE = (
+        ('M', '管理人员'),
+        ('T', '技术人员')
+    )
+
     user = models.OneToOneField(User, primary_key=True, on_delete = models.CASCADE)
     birth = models.DateField('出生日期', blank=True, null=True)
     # TODO Add read_name
-    dep = models.ForeignKey('Department', on_delete = models.CASCADE, blank=True, null=True)
-    arms = models.CharField('序列', max_length = 50, blank=True, null=True)
+    dep = models.ForeignKey('Department', on_delete = models.CASCADE, blank=True, null=True, verbose_name="所属部门")
+    arms = models.CharField('序列', max_length = 50, blank=True, null=True, choices=ARMS_TYPE)
     level = models.IntegerField('等级', default = 1)
     vacation = models.IntegerField('年假', default = 10) 
     def __str__(self):
@@ -41,7 +46,9 @@ class Department(models.Model):
         UserInfo,
         on_delete = models.CASCADE, 
         limit_choices_to={'arms': 'M'}, 
-        null = True
+        blank=True, 
+        null=True,
+        verbose_name="部门主管"
     )
     def __str__(self):
         return self.name
@@ -81,9 +88,14 @@ class Salary(models.Model):
 INDIVIDUAL = 1 # 个人财产
 ORGANIZED = 2  # 组织财产
 class Asset(models.Model):
+    SORT_TYPE = (
+        (1, '个人财产'),
+        (2, '组织财产')
+    )
+
     name = models.CharField('名称', max_length = 50)
     mark = models.CharField('产品标识', max_length = 40)
-    sort = models.IntegerField('类型', default = INDIVIDUAL)
+    sort = models.IntegerField('类型', default = 1, choices=SORT_TYPE)
     purchase = models.DateField('购入日期', auto_now_add = True)
     def __str__(self):
         return self.mark
@@ -127,9 +139,15 @@ ABSENCE = 2  # 缺席
 LEAVE = 3    # 请假
 VACATION = 4 # 年假
 class Attendance(models.Model):
+    STATUS_TYPE = (
+        (1, '出席'),
+        (2, '缺席'),
+        (3, '请假'),
+        (4, '年假')
+    )
     user = models.ForeignKey(User, on_delete = models.CASCADE)
     date = models.DateTimeField('日期', default = datetime.datetime.now())
-    status = models.IntegerField('状态', default = ATTEND)
+    status = models.IntegerField('状态', default = ATTEND, choices=STATUS_TYPE)
 
     class Meta:
         verbose_name = '员工考勤'
