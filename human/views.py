@@ -136,7 +136,14 @@ class MessageDetail(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data
         id = data['sender']
-        message = Message.objects.create(sender=self.get_user(id), to=self.get_user_master(id),message_type=data['type'],content=data['content'], key=data['key'])
+        if data['type'] != 'read':
+            to = self.get_user_master(id)
+            result = False
+        else:
+            to = self.get_user(data['to'])
+            result = True
+
+        message = Message.objects.create(sender=self.get_user(id), to=to, message_type=data['type'],content=data['content'], key=data['key'],result=result)
        
         if message.save():
             return Response({"message": "success", "error": 0})
@@ -147,7 +154,7 @@ class MessageList(APIView):
     # 从数据库中获取记录
     def get_object(self, pk):
         try:
-            return Message.objects.filter(to = pk)
+            return Message.objects.filter(to = pk).order_by('-time')
         except Message.DoesNotExist:
             raise Http404
 
@@ -165,9 +172,26 @@ class MessageOptions(APIView):
     
     def put(self, request, pk, format=None):
         message = self.get_object(pk)
-        print(message)
         if not message.status:
             message.status = True
+            if message.save():
+                return Response({"message": "success", "error": 0})
+            else:
+                return Response({"message": "error", "error": 1})
+        else:
+            return Response({"message": "success", "error": 0})
+
+class MessageResult(APIView):
+    def get_object(self, pk):
+        try:
+            return Message.objects.get(pk = pk)
+        except Message.DoesNotExist:
+            raise Http404
+    
+    def put(self, request, pk, format=None):
+        message = self.get_object(pk)
+        if not message.result:
+            message.result = True
             if message.save():
                 return Response({"message": "success", "error": 0})
             else:
@@ -181,14 +205,19 @@ class AssetOptions(APIView):
             return UserAsset.objects.get(pk = pk)
         except Message.DoesNotExist:
             raise Http404
-    
+    # 处理提出申请结果
     def put(self, request, pk, format=None):
         obj = self.get_object(pk)
-        obj.back = datetime.datetime.now()
+        data = request.data
+        if data['type'] == 1:
+            obj.back = datetime.datetime.now()
+        obj.status = data['type']
         if obj.save():
             return Response({"message": "success", "error": 0})
         else:
             return Response({"message": "error", "error": 1})
+
+        
 
 
 

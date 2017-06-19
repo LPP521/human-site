@@ -13,7 +13,7 @@ class DepartmentAdmin(admin.ModelAdmin):
 class AssetAdmin(admin.ModelAdmin):
     list_display = ('name', 'mark','sort', 'purchase')
 class UserAssetAdmin(admin.ModelAdmin):
-    list_display = ('user', 'asset', 'borrow', 'back')
+    list_display = ('user', 'asset', 'borrow', 'back', 'status')
 class AttendanceAdmin(admin.ModelAdmin):
     list_filter = ['date','status']
     search_fields = ['user']
@@ -21,7 +21,7 @@ class AttendanceAdmin(admin.ModelAdmin):
 class MessageAdmin(admin.ModelAdmin):
     search_fields = ['sender__username']
     list_filter = ['time', 'message_type']
-    list_display = ('sender', 'to', 'message_type', 'content', 'time', 'status')
+    list_display = ('sender', 'to', 'message_type', 'content', 'time', 'status', 'result')
 
     
 admin.site.register(UserInfo, UserAdmin)

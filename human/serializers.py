@@ -45,7 +45,7 @@ class UserAssetSerializer(serializers.ModelSerializer):
     asset = AssetSerializer(read_only = True)
     class Meta:
         model = UserAsset
-        fields = ('id', 'asset', 'borrow', 'back')
+        fields = ('id', 'asset', 'borrow', 'back', 'status')
 
 # 日期匹配时区
 class DateTimeFieldWihTZ(serializers.DateTimeField):
@@ -65,4 +65,4 @@ class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer()
     class Meta:
         model = Message
-        fields = ('id', 'sender', 'to', 'message_type', 'content', 'time', 'status', 'key')
+        fields = ('id', 'sender', 'to', 'message_type', 'content', 'time', 'status', 'key', 'result')

@@ -16,5 +16,6 @@ urlpatterns = [
    url(r'^vacation$', views.VacationDetail.as_view()),
    url(r'message/send$', views.MessageDetail.as_view()),
    url(r'message/(?P<pk>[0-9]+)$', views.MessageList.as_view()),
-   url(r'message/read/(?P<pk>[0-9]+)$', views.MessageOptions.as_view())
+   url(r'message/read/(?P<pk>[0-9]+)$', views.MessageOptions.as_view()),
+   url(r'message/result/(?P<pk>[0-9]+)$', views.MessageResult.as_view())
 ]
