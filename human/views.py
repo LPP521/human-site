@@ -93,6 +93,10 @@ class AttendanceDetail(APIView):
         return Response(serializer.data)
 
 class VacationDetail(APIView):
+    def get_user(self, id):
+        userinfo = UserInfo.objects.get(pk = id)
+        return userinfo
+
     def post(self, request, *args, **kwargs):
         print(request.data)
         print(request.data['start'].split('-'))
@@ -117,6 +121,10 @@ class VacationDetail(APIView):
                 flag = False
         
         if flag:
+            userinfo = self.get_user(data['user'])
+            userinfo.vacation -= days
+            userinfo.save()
+            # TODO 加验证
             for serializer in serializers:
                 serializer.save()
             return Response({"message": "success", "error": 0})
@@ -216,11 +224,3 @@ class AssetOptions(APIView):
             return Response({"message": "success", "error": 0})
         else:
             return Response({"message": "error", "error": 1})
-
-        
-
-
-
-                
-
-        

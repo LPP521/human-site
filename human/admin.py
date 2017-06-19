@@ -16,7 +16,7 @@ class UserAssetAdmin(admin.ModelAdmin):
     list_display = ('user', 'asset', 'borrow', 'back', 'status')
 class AttendanceAdmin(admin.ModelAdmin):
     list_filter = ['date','status']
-    search_fields = ['user']
+    search_fields = ['user__username']
     list_display = ('user', 'date', 'status')
 class MessageAdmin(admin.ModelAdmin):
     search_fields = ['sender__username']
